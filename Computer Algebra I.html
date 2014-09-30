@@ -1,0 +1,435 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset = "utf-8">
+<title>
+Computer Algebra. Part I
+</title>
+
+<style>
+
+.node text { font: 12px sans-serif; }
+
+.link {
+fill: none;
+stroke: #aaa;
+	stroke-width: 2px;
+}
+</style>
+</head>
+<body>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<center>
+Computer Algebra. Part I
+</center>
+
+<center>
+Rational expressions
+</center>
+
+<center>
+Allowable symbols: 0-9, a-z, +, -, *, /, (, )
+</center>
+
+<center>
+<input type = "text" id = "field" class = "custom" size = "100" autofocus>
+<input type = "button" id = "parse_but" onclick = "Parsing()" value = "Enter">
+</center>
+
+<script>
+$(document).ready(function(){
+	$('#field').keypress(function(e){
+		if(e.keyCode==13)
+			$('#parse_but').click();
+		if(e.keyCode==27)
+			$('#reset_but').click();
+	});
+});
+</script>
+
+<script language="javascript" type="text/javascript">
+
+function Parsing() 
+{
+
+	var text = document.getElementById("field").value;
+	var text2 = text;
+	var text3 = '';
+	var brackets_number = 0;
+	var op_br=0;
+	var cl_br=0;
+	var parsing_is_correct = true;
+
+
+	for (i = 0; i < text.length; i++) 
+	{
+		if (text[i] >= '0' && text[i] <= '9' || text[i] >= 'a' && text[i] <= 'z' || text[i] == '+' || text[i] == '-' || text[i] == '*' || text[i] == '/' || text[i] =='^' || text[i] == '(' || text[i] == ')') 
+		{ 
+		}        
+		else 
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		}
+
+
+		if ( (text[0]=='0') && (text[1]>='0' && text[1]<='9') )
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		}
+
+		if ( (text[i]=='0')&&(text[i-1]=='+' || text[i-1] == '-' || text[i-1] == '*' || text[i-1] == '/' || text[i-1] =='^' || text[i-1] == '(') && (text[i+1] >= '0' && text[i+1] <= '9') ) 
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		}
+
+
+		if ( (text[0] == '+' || text[0] == '-' || text[0] == '*' || text[0] == '/' || text[0] == '^')||(text[text.length-1] == '+' || text[text.length-1] == '-' || text[text.length-1] == '*' || text[text.length-1] == '/' || text[text.length-1]=='^'))	
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		}
+
+		if ( (text[i] == '+' || text[i] == '-' || text[i] == '*' || text[i] == '/' || text[i] == '^') && (text[i+1] == '+' || text[i+1] == '-' || text[i+1] == '*' || text[i+1] == '/' || text[i+1] == '^') )
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		}
+
+
+		if ( (text[i]=='(')&&(text[i+1]=='+' || text[i+1]=='-' || text[i+1]=='*' || text[i+1]=='/' || text[i+1]=='^'))
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		}
+
+		if ( (text[0] == ')')||(text[text.length - 1]=='(') )
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		} 
+
+		if ( (text[i]=='(')&&(text[i+1]==')') )
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		} 
+
+		if ( (text[i]==')')&&(text[i+1]=='(') )
+		{
+			alert("Error :( Please try again");
+			parsing_is_correct = false;
+			break;
+		}
+
+		if ( text[i]=='(' ) op_br=op_br+1;
+		if ( text[i]==')' ) cl_br=cl_br+1;
+
+	}
+	if ( op_br != cl_br ) 
+	{
+		alert("Error :( Please try again");
+		parsing_is_correct = false;
+	}
+
+
+	if (parsing_is_correct == true)
+		for (i = 0; i < text.length; i++) 
+		{
+			if (text[i] >= 'a' && text[i] <= 'z') 
+			{
+				if (i != text.length - 1) 
+				{
+					if (text[i + 1] == '+' || text[i + 1] == '-' || text[i + 1] == '*' || text[i + 1] == '/' || text[i + 1] == '^' || text[i + 1] == ')')
+					{text2 = text2.replace(text2[i], "_");}
+					else 
+					{
+						alert("Error :( Please try again");
+						parsing_is_correct = false;
+						break;
+					}
+				}
+				else text2 = text2.replace(text2[i], "_");
+				if (i != 0) 
+				{
+					if (text[i - 1] == ')')
+					{
+						alert("Error :( Please try again");
+						parsing_is_correct = false;
+						break;
+					}
+				}
+
+			}
+
+
+			if (text[i] >= '0' && text[i] <= '9') 
+			{
+				if (i != text.length - 1) 
+				{
+					if (text[i + 1] == '+' || text[i + 1] == '-' || text[i + 1] == '*' || text[i + 1] == '/' || text[i + 1] == '^' || text[i + 1] == ')' || text[i + 1] >= '0' && text[i + 1] <= '9')
+					{text2 = text2.replace(text2[i], "_");}
+					else 
+					{
+						alert("Error :( Please try again");
+						parsing_is_correct = false;
+						break;
+					}
+				}
+				else text2 = text2.replace(text2[i], "_");
+				if (i != 0) 
+				{
+					if (text[i - 1] == ')')
+					{
+						alert("Error :( Please try again");
+						parsing_is_correct = false;
+						break;
+					}
+				}
+			}
+		}
+
+
+		var arr = [];
+		var var_cont = 0;
+		for (i = 0; i < text2.length; i++) 
+		{
+			if (text2[i] != '_') 
+			{
+				arr.push(text2[i]);
+				var_cont = 0;
+			}
+			else 
+			{
+				if (var_cont == 1)
+					arr[arr.length - 1] = arr[arr.length - 1] + text[i]; 
+				else 
+				{
+					arr.push(text[i]);
+					var_cont = 1;
+				}
+			}
+		}
+
+		var arr2 = [];
+		brackets_number = 0;
+		var max_level = 0;
+		for (i = 0; i < arr.length; i++) 
+		{
+			if (arr[i] == '(') 
+			{
+
+				arr2[i] = { "name": "(", "ready": 0, "level": -1};
+				brackets_number++;
+				if (brackets_number > max_level) max_level = brackets_number;
+			}
+			else if (arr[i] == ')') 
+			{
+
+				arr2[i] = { "name": ")", "ready": 0, "level": -1};
+				brackets_number--;
+			}
+			else if (arr[i] == '+' || arr[i] == '-' || arr[i] == '*' || arr[i] == '/' || arr[i] == '^')
+				arr2[i] = { "name": arr[i], "ready": 0, "used": 0, "level": brackets_number, "order": 0};
+			else
+				arr2[i] = { "name": arr[i], "ready": 1, "used": 0, "level": -1};
+		}
+
+
+		var order = 1;
+		var power_not_found = 0, mult_not_found = 0, plus_not_found = 0;
+		var oper_found;
+		do 
+		{
+			oper_found = 0;
+			if (power_not_found == 0) 
+			{
+				for (i = 0; i < arr2.length; i++) 
+				{
+					if (arr2[i].level == max_level && arr2[i].order == 0)
+						if (arr2[i].name == '^') 
+						{
+							arr2[i].order = order;
+							order++;
+							oper_found = 1;
+						}
+				}
+				if (oper_found == 0) power_not_found = 1;
+			}
+			else if (mult_not_found == 0) 
+			{
+				for (i = 0; i < arr2.length; i++) 
+				{
+					if (arr2[i].level == max_level && arr2[i].order == 0)
+						if (arr2[i].name == '*' || arr2[i].name == '/') 
+						{
+							arr2[i].order = order;
+							order++;
+							oper_found = 1;
+						}
+				}
+				if (oper_found == 0) mult_not_found = 1;
+			}
+			else if (plus_not_found == 0) 	
+			{
+				for (i = 0; i < arr2.length; i++) 
+				{
+					if (arr2[i].level == max_level && arr2[i].order == 0)
+						if (arr2[i].name == '+' || arr2[i].name == '-') 
+						{
+							arr2[i].order = order;
+							order++;
+							oper_found = 1;
+						}
+				}
+				if (oper_found == 0) plus_not_found = 1;
+			}
+			else 
+			{
+				max_level--;
+				power_not_found = 0;
+				mult_not_found = 0;
+				plus_not_found = 0;
+			}
+		} while (max_level > -1);
+
+		var root_num;
+		for (i = 0; i < arr2.length; i++)
+			if (arr2[i].order == order - 1) 
+			{
+				root_num = i;
+				break;
+			}
+
+
+			var parent, left, right;
+			for (i = 1; i < order; i++) 
+			{
+				parent = left = right = 0;
+				for (p = 0; p < arr2.length; p++)                // parent
+					if (arr2[p].order == i) 
+					{
+						parent = p;
+						for (l = p - 1; l >= 0; l--)                 // left
+							if (arr2[l].ready == 1) 
+							{
+								left = l;
+								break;
+							}
+							for (r = p + 1; p < arr2.length; r++)        // right
+								if (arr2[r].ready == 1) 
+								{
+									right = r;
+									break;
+								}
+								arr2[parent].children = [arr2[left], arr2[right]];
+								arr2[parent].ready = 1;
+								arr2[left].ready = 0;
+								arr2[right].ready = 0;
+								break;
+					}
+			}
+
+
+
+
+// ************** Generate the tree diagram *****************
+    
+    var margin = {top: 30, right: 100, bottom: 0, left: 100},
+            width = 1000 - margin.right - margin.left,
+            height = 1000 - margin.top - margin.bottom;
+    
+    var i = 0;
+
+    var tree = d3.layout.tree()
+            .size([height, width]);
+
+    var diagonal = d3.svg.diagonal()
+            .projection(function (d) {
+                return [d.x, d.y];
+            });
+
+    var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.right + margin.left)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    root = arr2[root_num];
+    update(root);
+
+    function update(source) {
+
+// Compute the new tree layout.
+        var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+
+// Normalize for fixed-depth.
+        nodes.forEach(function (d) {
+            d.y = d.depth * 100;
+        });
+
+// Declare the nodes�
+        var node = svg.selectAll("g.node")
+                .data(nodes, function (d) {
+                    return d.id || (d.id = ++i);
+                });
+
+// Enter the nodes.
+        var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+
+        nodeEnter.append("circle")
+                .attr("r", 10)
+                .style("fill", "#fff");
+
+        nodeEnter.append("text")
+//.attr("y", function(d) {
+//return d.children || d._children ? -18 : 18; })
+                .attr("dy", ".35em")
+                .attr("text-anchor", "middle")
+                .text(function (d) {
+                    return d.name;
+                })
+//.style("fill-opacity", 1);
+
+// Declare the links�
+        var link = svg.selectAll("path.link")
+                .data(links, function (d) {
+                    return d.target.id;
+                });
+
+// Enter the links.
+        link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("d", function(d) {
+                    return "M" + d.source.x + "," + d.source.y
+                            + "L" + d.target.x + "," + d.target.y;
+                });
+
+    }
+    if (parsing_is_correct == false) {
+        d3.select("svg")
+              .remove();
+    }
+}
+
+</script>
+
+</body>
+</html>
